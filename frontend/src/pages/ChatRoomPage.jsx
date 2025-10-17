@@ -51,26 +51,41 @@ export default function ChatRoomPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!message.trim() || !chatId) return;
+  const handleSend = async () => {
+    if (!message.trim() && !imageFile || !chatId) return;
 
     const now = new Date();
+    let image_url = null;
+
+    if (imageFile) {
+      try {
+        const uploadResult = await base44.upload(imageFile);
+        image_url = uploadResult.file_url;
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        return;
+      }
+    }
+
     sendMessageMutation.mutate({
       chat_id: chatId,
       sender_name: user?.full_name || "Вы",
-      text: message,
+      text: message || "",
       is_outgoing: true,
+      image_url,
       timestamp: now.toISOString()
     });
 
     updateChatMutation.mutate({
       id: chatId,
       data: {
-        last_message: message,
+        last_message: message || "📷 Изображение",
         time: now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
         unread_count: 0
       }
     });
+
+    setImageFile(null);
   };
 
   const handleKeyPress = (e) => {
