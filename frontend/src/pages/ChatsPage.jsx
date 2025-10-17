@@ -1,12 +1,12 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "../api/apiClient";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, Phone, Video } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Search, Plus } from "lucide-react";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "../utils";
 
 export default function ChatsPage() {
   const navigate = useNavigate();
