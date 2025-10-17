@@ -26,10 +26,7 @@ export default function ChatsPage() {
     navigate(createPageUrl("ChatRoom") + `?chatId=${chat.id}&contactName=${encodeURIComponent(chat.contact_name)}`);
   };
 
-  const startCall = (e, chat, callType) => {
-    e.stopPropagation();
-    navigate(createPageUrl("CallScreen") + `?contactName=${encodeURIComponent(chat.contact_name)}&callType=${callType}`);
-  };
+  // Call functionality removed
 
   return (
     <div className="min-h-screen bg-gray-50">
