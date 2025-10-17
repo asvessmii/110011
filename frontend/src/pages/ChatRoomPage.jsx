@@ -12,7 +12,9 @@ export default function ChatRoomPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [message, setMessage] = React.useState("");
+  const [imageFile, setImageFile] = React.useState(null);
   const messagesEndRef = React.useRef(null);
+  const fileInputRef = React.useRef(null);
   
   const urlParams = new URLSearchParams(window.location.search);
   const chatId = urlParams.get('chatId');
