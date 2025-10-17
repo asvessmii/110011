@@ -1,7 +1,7 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "../api/apiClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Droplet, Cigarette, Zap, ShoppingCart, Minus, Plus, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

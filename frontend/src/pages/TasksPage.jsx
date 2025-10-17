@@ -1,7 +1,7 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "../api/apiClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Clock, Play, Square, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 
 export default function TasksPage() {
   const [activeTask, setActiveTask] = React.useState(null);

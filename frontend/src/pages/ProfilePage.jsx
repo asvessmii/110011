@@ -1,12 +1,12 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "../api/apiClient";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "../components/ui/button";
+import { Switch } from "../components/ui/switch";
 import { Bell, Sun, Shield, Settings, LogOut, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { createPageUrl } from '../utils';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
