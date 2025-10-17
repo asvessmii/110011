@@ -204,7 +204,15 @@ export default function ChatRoomPage() {
                               : 'bg-white text-gray-900 rounded-bl-sm shadow-sm'
                           }`}
                         >
-                          <p className="text-sm leading-relaxed break-words">{msg.text}</p>
+                          {msg.image_url && (
+                            <img 
+                              src={msg.image_url} 
+                              alt="Message" 
+                              className="rounded-lg mb-2 max-w-full h-auto"
+                              style={{ maxHeight: '300px' }}
+                            />
+                          )}
+                          {msg.text && <p className="text-sm leading-relaxed break-words">{msg.text}</p>}
                         </div>
                         <span className="text-xs text-gray-500 mt-1 px-2 block">
                           {formatMessageTime(msg.timestamp || msg.created_date)}
