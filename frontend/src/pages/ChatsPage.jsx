@@ -108,24 +108,6 @@ export default function ChatsPage() {
                         <span className="text-white text-xs font-bold">{chat.unread_count}</span>
                       </div>
                     )}
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={(e) => startCall(e, chat, 'audio')}
-                      >
-                        <Phone className="w-4 h-4 text-gray-400" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={(e) => startCall(e, chat, 'video')}
-                      >
-                        <Video className="w-4 h-4 text-gray-400" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
               </motion.div>
