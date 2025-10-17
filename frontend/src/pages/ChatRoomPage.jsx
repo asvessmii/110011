@@ -95,8 +95,11 @@ export default function ChatRoomPage() {
     }
   };
 
-  const handleStartCall = (callType) => {
-    navigate(createPageUrl("CallScreen") + `?contactName=${encodeURIComponent(contactName)}&callType=${callType}`);
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
   };
 
   const formatMessageTime = (timestamp) => {
