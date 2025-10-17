@@ -231,7 +231,33 @@ export default function ChatRoomPage() {
       {/* Input */}
       <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3">
         <div className="flex items-end gap-3 max-w-screen-xl mx-auto">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
+            className="hidden"
+          />
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            size="icon"
+            variant="ghost"
+            className="h-12 w-12 rounded-full flex-shrink-0"
+          >
+            <Paperclip className="w-5 h-5" />
+          </Button>
           <div className="flex-1 relative">
+            {imageFile && (
+              <div className="mb-2 p-2 bg-gray-100 rounded-lg flex items-center justify-between">
+                <span className="text-sm text-gray-600 truncate">{imageFile.name}</span>
+                <button
+                  onClick={() => setImageFile(null)}
+                  className="text-red-500 ml-2"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
             <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -243,7 +269,7 @@ export default function ChatRoomPage() {
           </div>
           <Button
             onClick={handleSend}
-            disabled={!message.trim() || sendMessageMutation.isPending}
+            disabled={(!message.trim() && !imageFile) || sendMessageMutation.isPending}
             size="icon"
             className="h-12 w-12 rounded-full bg-black hover:bg-gray-800 flex-shrink-0"
           >
