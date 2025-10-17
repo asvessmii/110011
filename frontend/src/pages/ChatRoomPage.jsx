@@ -153,15 +153,6 @@ export default function ChatRoomPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleStartCall('audio')}>
-            <Phone className="w-5 h-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full" onClick={() => handleStartCall('video')}>
-            <Video className="w-5 h-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <MoreVertical className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 
