@@ -57,11 +57,13 @@ export default function ProfilePage() {
                 {user?.email || "ivan.ivanov@example.com"}
               </p>
               <div className="flex gap-2">
+                {user?.user_code && (
+                  <span className="px-3 py-1 bg-black text-white rounded-full text-xs font-medium">
+                    Код: {user.user_code}
+                  </span>
+                )}
                 <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium">
                   Безопасность
-                </span>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium">
-                  ID: VAS
                 </span>
               </div>
             </div>
