@@ -369,14 +369,29 @@ async def create_message(message: MessageCreate, current_user: dict = Depends(ge
     message_doc = {
         "_id": message_id,
         "chat_id": message.chat_id,
-        "sender_name": message.sender_name,
+        "sender_id": current_user["id"],  # ID отправителя
+        "sender_name": current_user.get("full_name", "Unknown"),
         "text": message.text,
-        "is_outgoing": message.is_outgoing,
         "image_url": message.image_url,
         "timestamp": datetime.utcnow().isoformat(),
         "created_date": datetime.utcnow().isoformat()
     }
     await db.messages.insert_one(message_doc)
+    
+    # Update chat's last message
+    chat = await db.chats.find_one({"_id": message.chat_id})
+    if chat:
+        now = datetime.utcnow()
+        await db.chats.update_one(
+            {"_id": message.chat_id},
+            {
+                "$set": {
+                    "last_message": message.text or "📷 Изображение",
+                    "time": now.strftime("%H:%M")
+                }
+            }
+        )
+    
     return serialize_doc(message_doc)
 
 @app.get("/api/messages")
