@@ -3,7 +3,17 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'disable-host-check',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          next()
+        })
+      }
+    }
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -16,6 +26,7 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
     strictPort: false,
+    origin: 'http://0.0.0.0:3000',
   },
   preview: {
     port: 3000,
