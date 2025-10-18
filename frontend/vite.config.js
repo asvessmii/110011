@@ -5,14 +5,6 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     react(),
-    {
-      name: 'disable-host-check',
-      configureServer(server) {
-        server.middlewares.use((req, res, next) => {
-          next()
-        })
-      }
-    }
   ],
   resolve: {
     alias: {
@@ -24,7 +16,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    host: true,
     strictPort: false,
     hmr: {
       clientPort: 443,
@@ -33,7 +25,7 @@ export default defineConfig({
   },
   preview: {
     port: 3000,
-    host: '0.0.0.0',
+    host: true,
     strictPort: false,
   },
 })
