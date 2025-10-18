@@ -144,12 +144,20 @@ async def register(user: UserCreate):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    # Generate unique user code
+    while True:
+        user_code = generate_user_code()
+        existing_code = await db.users.find_one({"user_code": user_code})
+        if not existing_code:
+            break
+    
     user_id = str(uuid.uuid4())
     user_doc = {
         "_id": user_id,
         "email": user.email,
         "password": hash_password(user.password),
         "full_name": user.full_name,
+        "user_code": user_code,
         "avatar_url": None,
         "created_date": datetime.utcnow().isoformat()
     }
