@@ -187,6 +187,57 @@ async def update_me(update: UserUpdate, current_user: dict = Depends(get_current
     updated_user = await db.users.find_one({"_id": current_user["id"]})
     return serialize_doc(updated_user)
 
+# User search by code
+@app.get("/api/users/search/{user_code}")
+async def search_user_by_code(user_code: str, current_user: dict = Depends(get_current_user)):
+    user = await db.users.find_one({"user_code": user_code.upper()})
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь с таким кодом не найден")
+    
+    if user["_id"] == current_user["id"]:
+        raise HTTPException(status_code=400, detail="Вы не можете добавить самого себя")
+    
+    # Return only necessary fields
+    return {
+        "id": user["_id"],
+        "full_name": user["full_name"],
+        "user_code": user["user_code"],
+        "avatar_url": user.get("avatar_url")
+    }
+
+# Create or get existing chat with user
+@app.post("/api/chats/with-user/{target_user_id}")
+async def create_or_get_chat_with_user(target_user_id: str, current_user: dict = Depends(get_current_user)):
+    # Check if target user exists
+    target_user = await db.users.find_one({"_id": target_user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    # Check if chat already exists
+    existing_chat = await db.chats.find_one({
+        "user_id": current_user["id"],
+        "target_user_id": target_user_id
+    })
+    
+    if existing_chat:
+        return serialize_doc(existing_chat)
+    
+    # Create new chat
+    chat_id = str(uuid.uuid4())
+    chat_doc = {
+        "_id": chat_id,
+        "user_id": current_user["id"],
+        "target_user_id": target_user_id,
+        "contact_name": target_user["full_name"],
+        "is_online": False,
+        "last_message": "",
+        "time": "",
+        "unread_count": 0,
+        "created_date": datetime.utcnow().isoformat()
+    }
+    await db.chats.insert_one(chat_doc)
+    return serialize_doc(chat_doc)
+
 # File upload
 @app.post("/api/upload")
 async def upload_file(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
