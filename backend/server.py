@@ -97,6 +97,10 @@ class SOSCreate(BaseModel):
     status: str = "sent"  # sent, acknowledged, resolved
 
 # Helper functions
+def generate_user_code():
+    """Generate a unique 6-character alphanumeric code"""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
