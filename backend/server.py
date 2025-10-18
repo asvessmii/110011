@@ -338,11 +338,29 @@ async def list_chats(current_user: dict = Depends(get_current_user)):
 
 @app.patch("/api/chats/{chat_id}")
 async def update_chat(chat_id: str, update: ChatUpdate, current_user: dict = Depends(get_current_user)):
-    update_data = {k: v for k, v in update.dict().items() if v is not None}
-    if update_data:
-        await db.chats.update_one({"_id": chat_id, "user_id": current_user["id"]}, {"$set": update_data})
+    # Get the chat first to verify user has access
     chat = await db.chats.find_one({"_id": chat_id})
-    return serialize_doc(chat)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat not found")
+    
+    # Check if user is a participant
+    if current_user["id"] not in chat.get("participants", []):
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    
+    # Handle unread_count update for the current user
+    if "unread_count" in update_data:
+        unread_counts = chat.get("unread_count", {})
+        if isinstance(unread_counts, dict):
+            unread_counts[current_user["id"]] = update_data["unread_count"]
+            update_data["unread_count"] = unread_counts
+    
+    if update_data:
+        await db.chats.update_one({"_id": chat_id}, {"$set": update_data})
+    
+    updated_chat = await db.chats.find_one({"_id": chat_id})
+    return serialize_doc(updated_chat)
 
 # Messages
 @app.post("/api/messages")
