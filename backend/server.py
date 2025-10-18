@@ -213,30 +213,45 @@ async def create_or_get_chat_with_user(target_user_id: str, current_user: dict =
     if not target_user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     
-    # Check if chat already exists
+    # Check if chat already exists (check both directions)
     existing_chat = await db.chats.find_one({
-        "user_id": current_user["id"],
-        "target_user_id": target_user_id
+        "$or": [
+            {"participants": {"$all": [current_user["id"], target_user_id]}},
+        ]
     })
     
     if existing_chat:
-        return serialize_doc(existing_chat)
+        # Return chat with correct contact name for current user
+        other_user_id = target_user_id if existing_chat["participants"][0] != target_user_id else existing_chat["participants"][0]
+        other_user = await db.users.find_one({"_id": other_user_id})
+        chat_result = serialize_doc(existing_chat)
+        chat_result["contact_name"] = other_user["full_name"] if other_user else "Unknown"
+        chat_result["other_user_id"] = other_user_id
+        return chat_result
     
-    # Create new chat
+    # Create new chat with both participants
     chat_id = str(uuid.uuid4())
     chat_doc = {
         "_id": chat_id,
-        "user_id": current_user["id"],
-        "target_user_id": target_user_id,
-        "contact_name": target_user["full_name"],
-        "is_online": False,
+        "participants": [current_user["id"], target_user_id],  # Both users in the chat
+        "participant_names": {
+            current_user["id"]: current_user.get("full_name", "Unknown"),
+            target_user_id: target_user["full_name"]
+        },
         "last_message": "",
         "time": "",
-        "unread_count": 0,
+        "unread_count": {
+            current_user["id"]: 0,
+            target_user_id: 0
+        },
         "created_date": datetime.utcnow().isoformat()
     }
     await db.chats.insert_one(chat_doc)
-    return serialize_doc(chat_doc)
+    
+    result = serialize_doc(chat_doc)
+    result["contact_name"] = target_user["full_name"]
+    result["other_user_id"] = target_user_id
+    return result
 
 # File upload
 @app.post("/api/upload")
