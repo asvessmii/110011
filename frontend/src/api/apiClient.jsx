@@ -87,6 +87,10 @@ export const apiClient = {
         const res = await api.patch(`/api/chats/${id}`, data);
         return res.data;
       },
+      createWithUser: async (targetUserId) => {
+        const res = await api.post(`/api/chats/with-user/${targetUserId}`);
+        return res.data;
+      },
     },
     Message: {
       create: async (data) => {
