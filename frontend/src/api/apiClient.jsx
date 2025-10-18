@@ -56,6 +56,10 @@ export const apiClient = {
       const res = await api.patch('/api/auth/me', data);
       return res.data;
     },
+    searchByCode: async (userCode) => {
+      const res = await api.get(`/api/users/search/${userCode}`);
+      return res.data;
+    },
   },
 
   // Upload
