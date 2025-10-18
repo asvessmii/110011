@@ -14,11 +14,10 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: '0.0.0.0',
-    allowedHosts: ['all'],
+    host: true,
+    strictPort: false,
     hmr: {
       clientPort: 443,
-      protocol: 'wss',
     },
   },
 })
