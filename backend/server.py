@@ -303,8 +303,38 @@ async def create_chat(chat: ChatCreate, current_user: dict = Depends(get_current
 
 @app.get("/api/chats")
 async def list_chats(current_user: dict = Depends(get_current_user)):
-    chats = await db.chats.find({"user_id": current_user["id"]}).sort("created_date", -1).to_list(100)
-    return [serialize_doc(chat) for chat in chats]
+    # Get all chats where current user is a participant
+    chats = await db.chats.find({
+        "participants": current_user["id"]
+    }).sort("created_date", -1).to_list(100)
+    
+    result = []
+    for chat in chats:
+        # Find the other participant
+        other_user_id = None
+        for participant_id in chat.get("participants", []):
+            if participant_id != current_user["id"]:
+                other_user_id = participant_id
+                break
+        
+        if other_user_id:
+            # Get other user's info
+            other_user = await db.users.find_one({"_id": other_user_id})
+            chat_data = serialize_doc(chat)
+            chat_data["contact_name"] = other_user["full_name"] if other_user else "Unknown User"
+            chat_data["other_user_id"] = other_user_id
+            chat_data["is_online"] = False  # TODO: implement online status
+            
+            # Get unread count for current user
+            unread_counts = chat.get("unread_count", {})
+            if isinstance(unread_counts, dict):
+                chat_data["unread_count"] = unread_counts.get(current_user["id"], 0)
+            else:
+                chat_data["unread_count"] = 0
+                
+            result.append(chat_data)
+    
+    return result
 
 @app.patch("/api/chats/{chat_id}")
 async def update_chat(chat_id: str, update: ChatUpdate, current_user: dict = Depends(get_current_user)):
